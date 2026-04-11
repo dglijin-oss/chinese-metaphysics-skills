@@ -250,3 +250,4 @@ function getDaShiDuanYu(shenJiangList, zhuKePD, question = 'general') {
   
   return duanYu.general;
 }
+// v2.1.0 自我进化增强

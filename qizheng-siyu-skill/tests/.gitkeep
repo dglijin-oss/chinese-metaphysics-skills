@@ -1,0 +1,4 @@
+# qizheng-siyu-skill 测试用例
+import sys
+sys.path.insert(0, 'scripts')
+print('qizheng-siyu-skill 测试框架已创建')

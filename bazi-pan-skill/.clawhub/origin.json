@@ -1,0 +1,12 @@
+{
+  "name": "bazi-pan-skill",
+  "version": "2.0.0",
+  "author": "天工长老",
+  "description": "八字命理排盘技能。支持四柱八字排盘、十神计算、大运排法、五行统计、格局判断、用神选取、流年推算、详细断语。",
+  "license": "MIT",
+  "repository": "https://github.com/dglijin-oss/bazi-pan-skill",
+  "category": "metaphysics",
+  "tags": ["八字", "命理", "排盘", "易经"],
+  "runtime": "python3.8+",
+  "entry": "scripts/bazi_pan.py"
+}

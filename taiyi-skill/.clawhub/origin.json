@@ -1,0 +1,12 @@
+{
+  "name": "taiyi-skill",
+  "version": "2.0.0",
+  "author": "天工长老",
+  "description": "太乙神数排盘技能。支持太乙积年、起局、排十六神将、计算主客算、断局分析。用于国运预测、天灾预警、经济大势、战争胜负等宏观预测。",
+  "license": "MIT",
+  "repository": "https://github.com/dglijin-oss/taiyi-skill",
+  "category": "metaphysics",
+  "tags": ["太乙神数", "三式", "国运", "易经"],
+  "runtime": "node14+",
+  "entry": "index.js"
+}

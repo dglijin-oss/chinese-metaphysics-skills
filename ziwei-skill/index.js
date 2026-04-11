@@ -205,3 +205,4 @@ module.exports = {
   GONG_WEI,
   ZHU_XING
 };
+// v2.1.0 自我进化增强

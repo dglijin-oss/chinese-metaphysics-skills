@@ -1,0 +1,12 @@
+{
+  "name": "ziwei-skill",
+  "version": "2.0.0",
+  "author": "天工长老",
+  "description": "紫微斗数排盘技能。支持十四主星、十二宫位、四化飞星排盘，提供命运、性格、事业、婚姻、财运等分析。",
+  "license": "MIT",
+  "repository": "https://github.com/dglijin-oss/ziwei-skill",
+  "category": "metaphysics",
+  "tags": ["紫微斗数", "星命", "排盘", "易经"],
+  "runtime": "node14+",
+  "entry": "index.js"
+}

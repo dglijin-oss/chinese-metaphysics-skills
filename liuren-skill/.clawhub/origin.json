@@ -1,0 +1,12 @@
+{
+  "name": "liuren-skill",
+  "version": "2.0.0",
+  "author": "天工长老",
+  "description": "大六壬排盘与断卦技能。支持月将加时、起四课三传、排天将神煞、断课分析。",
+  "license": "MIT",
+  "repository": "https://github.com/dglijin-oss/liuren-skill",
+  "category": "metaphysics",
+  "tags": ["大六壬", "三式", "占卜", "易经"],
+  "runtime": "node14+",
+  "entry": "index.js"
+}

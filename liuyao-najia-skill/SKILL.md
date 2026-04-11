@@ -1,16 +1,18 @@
 ---
 name: liuyao-najia-skill
 description: 六爻纳甲排盘与断卦技能。支持起卦、纳甲、装卦、六亲、世应、六神排布，以及自动化断卦分析。
-version: 3.0.0
+version: 3.1.0
 author: 天工长老
 ---
 
-# 六爻纳甲技能 v3.0.0
+# 六爻纳甲技能 v3.1.0
 
 > "六爻通神，纳甲断卦。"
 
-## 功能
+## 功能 v3.1.0
 
+- ✅ 统一断语风格（古风简洁，切中要害）
+- ✅ 技能联动接口（可调用奇门/梅花综合推断）
 - ✅ 铜钱起卦 / 数字起卦
 - ✅ 纳甲装卦
 - ✅ 六亲排布
@@ -28,6 +30,11 @@ python3 scripts/liuyao_pan.py --method "coin"
 python3 scripts/liuyao_pan.py --method "number" --numbers "3,5,7,2,8,9"
 python3 scripts/liuyao_pan.py --question "财运"
 ```
+
+## 变更
+
+v3.1.0 (2026-04-11): 统一断语风格、技能联动接口、十大技能协同
+v3.0.0: 自动化断卦、应期推算、特殊格局识别
 
 ## 变更
 

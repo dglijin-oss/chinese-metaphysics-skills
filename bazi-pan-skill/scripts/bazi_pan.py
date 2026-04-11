@@ -614,3 +614,176 @@ def main():
 
 if __name__ == '__main__':
     exit(main())
+
+# ============== v2.1.0 增强断语库 ==============
+
+DUAN_YU_KU_V2 = {
+    '事业': {
+        '比肩': '独立自主，适合创业或自由职业',
+        '劫财': '竞争激烈，宜合作求财',
+        '食神': '才华横溢，利艺术、设计、教育',
+        '伤官': '创意丰富，利媒体、广告、策划',
+        '偏财': '财运波动，利投资、贸易、副业',
+        '正财': '财运稳定，利固定工作、薪资收入',
+        '七杀': '有魄力，利军警、管理、开拓',
+        '正官': '事业稳定，利公职、行政、管理',
+        '偏印': '特殊才能，利研究、技术、玄学',
+        '正印': '聪明智慧，利文化、教育、学术',
+    },
+    '婚姻': {
+        '男正财旺': '妻贤子孝，婚姻稳定',
+        '男偏财旺': '桃花较旺，需注意感情纠纷',
+        '女正官旺': '夫贵妻荣，婚姻美满',
+        '女七杀旺': '配偶强势，需互相包容',
+        '食伤旺': '重感情，易为情所困',
+        '印星旺': '重家庭，顾家爱子',
+    },
+    '财运': {
+        '财星旺': '财运亨通，善于理财',
+        '财星弱': '财运平平，宜保守理财',
+        '食伤生财': '靠才华赚钱',
+        '官星护财': '靠地位赚钱',
+        '比劫夺财': '易破财，宜合伙经营',
+    },
+    '健康': {
+        '木弱': '注意肝胆、筋骨、眼睛',
+        '火弱': '注意心脏、血液、小肠',
+        '土弱': '注意脾胃、皮肤、肌肉',
+        '金弱': '注意肺、呼吸道、大肠',
+        '水弱': '注意肾脏、泌尿系统、耳朵',
+    },
+}
+
+# ============== v2.2.0 神煞系统 ==============
+
+SHEN_SHA = {
+    '天乙贵人': {
+        '甲戊庚': ['丑', '未'], '乙': ['子', '申'], '丙': ['亥', '酉'],
+        '丁': ['亥', '酉'], '壬': ['巳', '卯'], '癸': ['巳', '卯'],
+        '六辛': ['寅', '午'], '六己': ['子', '申'],
+    },
+    '文昌': {
+        '甲': '巳', '乙': '午', '丙': '申', '丁': '酉', '戊': '申',
+        '己': '酉', '庚': '亥', '辛': '子', '壬': '寅', '癸': '卯',
+    },
+    '桃花': {
+        '亥卯未': '子', '寅午戌': '卯', '巳酉丑': '午', '申子辰': '酉',
+    },
+    '驿马': {
+        '申子辰': '寅', '寅午戌': '申', '巳酉丑': '亥', '亥卯未': '巳',
+    },
+    '华盖': {
+        '申子辰': '辰', '寅午戌': '戌', '巳酉丑': '丑', '亥卯未': '未',
+    },
+}
+
+def get_shen_sha(ri_gan: str, nian_zhi: str, ri_zhi: str) -> Dict:
+    """计算神煞"""
+    shen_sha = {}
+    
+    # 天乙贵人
+    for gan_group, zhi_list in SHEN_SHA['天乙贵人'].items():
+        if ri_gan in gan_group or ri_gan == gan_group[0]:
+            shen_sha['天乙贵人'] = zhi_list
+            break
+    
+    # 文昌
+    for gan, zhi in SHEN_SHA['文昌'].items():
+        if ri_gan == gan:
+            shen_sha['文昌'] = zhi
+            break
+    
+    # 桃花（按年支）
+    for zhi_group, tao_hua in SHEN_SHA['桃花'].items():
+        if nian_zhi in zhi_group:
+            shen_sha['桃花'] = tao_hua
+            break
+    
+    # 驿马（按年支）
+    for zhi_group, yi_ma in SHEN_SHA['驿马'].items():
+        if nian_zhi in zhi_group:
+            shen_sha['驿马'] = yi_ma
+            break
+    
+    # 华盖（按年支）
+    for zhi_group, hua_gai in SHEN_SHA['华盖'].items():
+        if nian_zhi in zhi_group:
+            shen_sha['华盖'] = hua_gai
+            break
+    
+    return shen_sha
+
+# ============== v2.3.0 综合评分系统 ==============
+
+def calculate_comprehensive_score(result: Dict) -> int:
+    """计算八字综合评分 (0-100)"""
+    score = 50  # 基础分
+    
+    # 五行平衡 (0-20 分)
+    wuxing = result.get('五行统计', {})
+    counts = list(wuxing.values())
+    if max(counts) - min(counts) <= 1:
+        score += 20  # 五行平衡
+    elif max(counts) - min(counts) <= 2:
+        score += 10  # 基本平衡
+    else:
+        score += 5   # 失衡
+    
+    # 格局 (0-15 分)
+    ge_ju = result.get('格局', '')
+    good_ge_ju = ['正官格', '正印格', '食神格', '正财格']
+    if ge_ju in good_ge_ju:
+        score += 15
+    elif ge_ju:
+        score += 10
+    
+    # 用神 (0-15 分)
+    yong_shen = result.get('用神', {})
+    if yong_shen.get('旺衰') == '旺':
+        score += 15
+    elif yong_shen.get('旺衰') == '相':
+        score += 10
+    else:
+        score += 5
+    
+    # 大运 (0-10 分)
+    da_yun = result.get('大运', [])
+    if len(da_yun) >= 8:
+        score += 10
+    
+    return min(score, 100)
+
+def get_trend_advice(result: Dict) -> Dict:
+    """生成趋吉避凶建议"""
+    advice = {
+        '吉利方位': [],
+        '吉利颜色': [],
+        '吉利行业': [],
+        '注意事项': [],
+    }
+    
+    # 根据用神五行
+    yong_shen = result.get('用神', {})
+    xi_yong = yong_shen.get('喜用', [])
+    
+    wuxing_direction = {'木': '东方', '火': '南方', '土': '中央', '金': '西方', '水': '北方'}
+    wuxing_color = {'木': '绿色', '火': '红色', '土': '黄色', '金': '白色', '水': '黑色'}
+    wuxing_industry = {
+        '木': '教育、文化、出版', '火': '能源、餐饮、娱乐',
+        '土': '房地产、建筑、农业', '金': '金融、机械、珠宝',
+        '水': '贸易、物流、旅游'
+    }
+    
+    for wx in xi_yong:
+        if wx in wuxing_direction:
+            advice['吉利方位'].append(wuxing_direction[wx])
+            advice['吉利颜色'].append(wuxing_color[wx])
+            advice['吉利行业'].append(wuxing_industry[wx])
+    
+    # 注意事项
+    if result.get('五行统计', {}).get('木', 0) == 0:
+        advice['注意事项'].append('五行缺木，多接触绿色植物')
+    if result.get('五行统计', {}).get('水', 0) == 0:
+        advice['注意事项'].append('五行缺水，多喝水、近水而居')
+    
+    return advice

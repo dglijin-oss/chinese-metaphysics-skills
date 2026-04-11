@@ -1,0 +1,12 @@
+{
+  "name": "meihua-yishu-skill",
+  "version": "2.0.0",
+  "author": "天工长老",
+  "description": "梅花易数排盘与断卦技能。支持数字起卦、时间起卦、方位起卦，包含互卦、变卦、体用分析、自动化断卦。",
+  "license": "MIT",
+  "repository": "https://github.com/dglijin-oss/meihua-yishu-skill",
+  "category": "metaphysics",
+  "tags": ["梅花易数", "邵雍", "占卜", "易经"],
+  "runtime": "python3.8+",
+  "entry": "scripts/meihua_pan.py"
+}
