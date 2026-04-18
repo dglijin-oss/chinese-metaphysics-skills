@@ -1,7 +1,7 @@
 ---
 name: ze-ri-skill
 description: 择日学技能。支持查询吉日凶日、建除十二神、黄道黑道、神煞吉凶，提供婚嫁、开业、动土、出行等择日建议。
-version: 3.1.0
+version: 3.2.0
 author: 天工长老
 ---
 

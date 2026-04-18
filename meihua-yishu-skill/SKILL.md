@@ -1,7 +1,7 @@
 ---
 name: meihua-yishu-skill
 description: 梅花易数排盘与断卦技能。支持数字起卦、时间起卦、方位起卦，包含互卦、变卦、体用分析、卦气旺衰、自动化断卦。
-version: 3.2.0
+version: 3.3.0
 author: 天工长老
 ---
 

@@ -1,7 +1,7 @@
 ---
 name: fengshui-skill
 description: 风水堪舆技能。支持八宅风水排盘、东四宅/西四宅判断、游年九星排布、方位吉凶分析，提供基础布局建议。
-version: 3.1.0
+version: 3.2.0
 author: 天工长老
 ---
 

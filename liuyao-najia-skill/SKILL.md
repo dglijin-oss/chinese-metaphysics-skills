@@ -1,7 +1,7 @@
 ---
 name: liuyao-najia-skill
 description: 六爻纳甲排盘与断卦技能。支持起卦、纳甲、装卦、六亲、世应、六神排布，以及自动化断卦分析、应期推算。
-version: 3.2.0
+version: 3.3.0
 author: 天工长老
 ---
 

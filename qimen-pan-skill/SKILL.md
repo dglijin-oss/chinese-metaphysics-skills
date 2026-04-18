@@ -1,7 +1,7 @@
 ---
 name: qimen-pan-skill
 description: 奇门遁甲排盘技能。支持阴阳遁、局数、八门九星八神落宫、断卦解盘自动化分析、格局识别增强（准确度100%）。
-version: 3.2.0
+version: 3.3.0
 author: 天工长老
 ---
 

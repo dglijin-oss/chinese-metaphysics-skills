@@ -1,7 +1,7 @@
 ---
 name: bazi-pan-skill
 description: 八字命理排盘技能。支持四柱八字排盘、十神计算、大运排法、五行统计、格局判断、用神选取、流年推算、详细断语、神煞系统（33+神煞）。
-version: 3.2.0
+version: 3.3.0
 author: 天工长老
 ---
 
