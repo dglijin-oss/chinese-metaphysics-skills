@@ -1,18 +1,27 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-八字排盘工具 v2.0.0
+八字排盘工具 v4.0.0
 天工长老开发
 
 功能：四柱八字排盘、十神计算、大运排法、流年推算、格局判断、用神选取、详细断语
-v1.0.0 基础版：四柱排盘、十神显示、大运计算
-v2.0.0 升级版：流年推算、格局判断、用神选取、增强断语库
+v3.3.0 神煞增强：33+神煞完整识别
+v4.0.0 全面升级：刑冲合害分析、流月推算、综合评分、趋吉避凶建议
 """
 
 import argparse
 import json
+import sys
+import os
 from datetime import datetime
 from typing import Dict, List, Tuple, Optional
+
+# 导入 v4.0.0 新模块
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, SCRIPT_DIR)
+from xing_chong_he_hai import XingChongHeHai, analyze_xing_chong_he_hai
+from liu_yue import LiuYueCalculator
+from comprehensive_score import ComprehensiveScorer, TrendAdvisor
 
 # ============== 基础数据 ==============
 
@@ -463,10 +472,11 @@ def bazi_pan(
     date_str: str,
     hour: int,
     gender: str = '男',
-    liu_nian_year: Optional[int] = None
+    liu_nian_year: Optional[int] = None,
+    show_liu_yue: bool = False,
 ) -> Dict:
     """
-    八字排盘主函数 v2.0.0
+    八字排盘主函数 v4.0.0
     """
     dt = datetime.strptime(date_str, "%Y-%m-%d")
     year, month, day = dt.year, dt.month, dt.day
@@ -501,7 +511,7 @@ def bazi_pan(
         wuxing_count[GAN_WUXING[zhu[0]]] += 1
         wuxing_count[ZHI_WUXING[zhu[1]]] += 1
     
-    # v2.0.0 新增功能
+    # v2.0.0 功能
     ge_ju = BaZiPan.get_ge_ju(si_zhu, shi_shen)
     yong_shen = BaZiPan.get_yong_shen(day_gan, wuxing_count)
     duan_yu = BaZiPan.get_zeng_qiang_duan_yu(day_gan, si_zhu, shi_shen, wuxing_count, ge_ju, yong_shen)
@@ -511,10 +521,63 @@ def bazi_pan(
     if liu_nian_year:
         liu_nian = BaZiPan.get_liu_nian(liu_nian_year, si_zhu, day_gan)
     
+    # ===== v4.0.0 新增功能 =====
+    
+    # 1. 刑冲合害分析
+    si_zhu_zhi = [year_zhi, month_zhi, day_zhi, hour_zhi]
+    liu_nian_zhi_for_xch = None
+    if liu_nian:
+        # liu_nian is a dict, extract the zhi from 流年 field
+        ln_gz = liu_nian.get('流年', '')
+        if len(ln_gz) == 2:
+            liu_nian_zhi_for_xch = ln_gz[1]
+    xing_chong = XingChongHeHai.analyze(si_zhu_zhi, liu_nian_zhi=liu_nian_zhi_for_xch)
+    
+    # 2. 神煞系统
+    try:
+        from shen_sha_enhancer import ShenShaCalculator
+        ss_calc = ShenShaCalculator()
+        shen_sha = ss_calc.calculate_all_shen_sha(
+            year_gan, year_zhi, month_gan, month_zhi,
+            day_gan, day_zhi, hour_gan, hour_zhi, gender
+        )
+    except Exception:
+        shen_sha = None
+    
+    # 3. 综合评分
+    score = ComprehensiveScorer.calculate_score(
+        si_zhu, wuxing_count, ge_ju, yong_shen,
+        shen_sha_result=shen_sha,
+        xing_chong_result=xing_chong,
+    )
+    
+    # 4. 趋吉避凶建议
+    advice = TrendAdvisor.generate_advice(
+        yong_shen, wuxing_count, si_zhu, day_gan,
+        xing_chong_result=xing_chong,
+    )
+    
+    # 5. 流月推算
+    liu_yue = None
+    if show_liu_yue and liu_nian_year:
+        liu_nian_gan, liu_nian_zhi = liu_nian_year % 10, liu_nian_year % 12
+        # 重新获取流年干支
+        ln_gan = TIAN_GAN[(liu_nian_year - 4) % 10]
+        ln_zhi = DI_ZHI[(liu_nian_year - 4) % 12]
+        liu_yue = LiuYueCalculator.calculate_monthly_fortune(
+            day_gan=day_gan,
+            si_zhu=si_zhu,
+            yong_shen=yong_shen,
+            year=liu_nian_year,
+            liu_nian_gan=ln_gan,
+            liu_nian_zhi=ln_zhi,
+        )
+    
     result = {
         '出生时间': f"{date_str} {hour:02d}:00",
         '性别': gender,
         '四柱': {k: f"{v[0]}{v[1]}" for k, v in si_zhu.items()},
+        '四柱详情': si_zhu,
         '十神': shi_shen,
         '五行统计': wuxing_count,
         '大运': da_yun,
@@ -523,16 +586,22 @@ def bazi_pan(
         '用神': yong_shen,
         '流年': liu_nian,
         '断语': duan_yu,
+        # v4.0.0 新增
+        '刑冲合害': xing_chong,
+        '神煞': shen_sha,
+        '综合评分': score,
+        '趋吉避凶': advice,
+        '流月': liu_yue,
     }
     
     return result
 
 
 def format_output(result: Dict) -> str:
-    """格式化输出 v2.0.0"""
+    """格式化输出 v4.0.0"""
     output = []
     
-    output.append("【八字排盘】v2.0.0")
+    output.append("【八字排盘】v4.0.0")
     output.append(f"• 出生时间：{result['出生时间']}")
     output.append(f"• 性别：{result['性别']}")
     output.append("")
@@ -556,7 +625,6 @@ def format_output(result: Dict) -> str:
     for dy in result['大运']:
         output.append(f"    {dy['起始年龄']}岁：{dy['干支']}")
     
-    # v2.0.0 新增
     if result['格局']:
         output.append("")
         output.append("【格局】")
@@ -577,6 +645,49 @@ def format_output(result: Dict) -> str:
         output.append(f"    冲克：{', '.join(ln['冲克'])}")
         output.append(f"    断语：{ln['断语']}")
     
+    # ===== v4.0.0 新增输出 =====
+    
+    # 综合评分
+    if result.get('综合评分'):
+        sc = result['综合评分']
+        output.append("")
+        output.append("【综合评分】")
+        output.append(f"    总分：{sc['总分']}/100  等级：{sc['等级']}")
+        output.append(f"    {sc['等级说明']}")
+        output.append(f"    五行平衡:{sc['分项评分']['五行平衡']}  格局:{sc['分项评分']['格局优劣']}  用神:{sc['分项评分']['用神有力']}")
+        output.append(f"    神煞:{sc['分项评分']['神煞吉凶']}  刑冲合害:{sc['分项评分']['刑冲合害']}  日主:{sc['分项评分']['日主强弱']}")
+    
+    # 神煞
+    if result.get('神煞') and result['神煞'].get('总数', 0) > 0:
+        ss = result['神煞']
+        output.append("")
+        output.append("【神煞】")
+        output.append(f"    吉神:{ss.get('吉神数',0)}个  凶煞:{ss.get('凶煞数',0)}个  共{ss.get('总数',0)}个")
+        for cat_name in ['贵人吉神', '文星学业', '禄财', '婚姻感情', '动迁出行', '特殊格局', '凶煞']:
+            items = ss.get(cat_name, [])
+            if items:
+                names = [item['神煞'] for item in items]
+                output.append(f"    【{cat_name}】{', '.join(names)}")
+    
+    # 刑冲合害
+    if result.get('刑冲合害'):
+        xch = result['刑冲合害']
+        has_any = any([xch.get('六合'), xch.get('六冲'), xch.get('三合'),
+                       xch.get('半三合'), xch.get('三刑'), xch.get('六害'), xch.get('相破')])
+        if has_any:
+            output.append("")
+            output.append(XingChongHeHai.format_output(xch))
+    
+    # 流月
+    if result.get('流月'):
+        output.append("")
+        output.append(LiuYueCalculator.format_output(result['流月']))
+    
+    # 趋吉避凶
+    if result.get('趋吉避凶'):
+        output.append("")
+        output.append(TrendAdvisor.format_output(result['趋吉避凶']))
+    
     output.append("")
     output.append("【详细断语】")
     for duan in result['断语']:
@@ -586,17 +697,18 @@ def format_output(result: Dict) -> str:
 
 
 def main():
-    parser = argparse.ArgumentParser(description='八字排盘工具 v2.0.0')
+    parser = argparse.ArgumentParser(description='八字排盘工具 v4.0.0')
     parser.add_argument('--date', '-d', type=str, required=True, help='出生日期 (YYYY-MM-DD)')
     parser.add_argument('--hour', '-H', type=int, required=True, help='出生时辰 (0-23)')
     parser.add_argument('--gender', '-g', type=str, default='男', choices=['男', '女'], help='性别')
     parser.add_argument('--liu-nian', '-l', type=int, help='流年年份（可选）')
+    parser.add_argument('--liu-yue', '-m', action='store_true', help='显示流月运势（需配合--liu-nian）')
     parser.add_argument('--json', '-j', action='store_true', help='输出 JSON 格式')
     
     args = parser.parse_args()
     
     try:
-        result = bazi_pan(args.date, args.hour, args.gender, args.liu_nian)
+        result = bazi_pan(args.date, args.hour, args.gender, args.liu_nian, show_liu_yue=args.liu_yue)
         
         if args.json:
             print(json.dumps(result, ensure_ascii=False, indent=2))

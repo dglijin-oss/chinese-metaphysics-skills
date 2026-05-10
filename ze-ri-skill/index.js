@@ -80,8 +80,8 @@ function getYiJi(jianChu, huangDao) {
   };
   
   return {
-    宜：yiMap[jianChu] || [],
-    忌：jiMap[jianChu] || []
+    yi: yiMap[jianChu] || [],
+    ji: jiMap[jianChu] || []
   };
 }
 
